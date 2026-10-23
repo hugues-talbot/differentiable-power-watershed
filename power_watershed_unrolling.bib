@@ -1,0 +1,210 @@
+% ============================================================
+%  Deep-unrolled Power Watershed / Random Walker
+%  Bibliography for feasibility note
+% ============================================================
+
+% ------------------------------------------------------------
+%  1. The PW / RW framework
+% ------------------------------------------------------------
+
+@article{couprie2011power,
+  author  = {Couprie, Camille and Grady, Leo and Najman, Laurent and Talbot, Hugues},
+  title   = {Power Watershed: A Unifying Graph-Based Optimization Framework},
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume  = {33},
+  number  = {7},
+  pages   = {1384--1399},
+  year    = {2011},
+  doi     = {10.1109/TPAMI.2010.200}
+}
+
+@inproceedings{couprie2009power,
+  author    = {Couprie, Camille and Grady, Leo and Najman, Laurent and Talbot, Hugues},
+  title     = {Power Watersheds: A New Image Segmentation Framework Extending
+               Graph Cuts, Random Walker and Optimal Spanning Forest},
+  booktitle = {IEEE International Conference on Computer Vision (ICCV)},
+  address   = {Kyoto, Japan},
+  year      = {2009}
+}
+
+@article{grady2006random,
+  author  = {Grady, Leo},
+  title   = {Random Walks for Image Segmentation},
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume  = {28},
+  number  = {11},
+  pages   = {1768--1783},
+  year    = {2006},
+  doi     = {10.1109/TPAMI.2006.233}
+}
+
+@inproceedings{grady2005multilabel,
+  author    = {Grady, Leo},
+  title     = {Multilabel Random Walker Image Segmentation Using Prior Models},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2005},
+  note      = {Source of the SPD prior-augmented system used here in place of hard seed clamping}
+}
+
+@inproceedings{sinop2007seeded,
+  author    = {Sinop, Ali Kemal and Grady, Leo},
+  title     = {A Seeded Image Segmentation Framework Unifying Graph Cuts and
+               Random Walker Which Yields a New Algorithm},
+  booktitle = {IEEE International Conference on Computer Vision (ICCV)},
+  year      = {2007}
+}
+
+@inproceedings{allene2007links,
+  author    = {All{\`e}ne, C{\'e}dric and Audibert, Jean-Yves and Couprie, Michel
+               and Cousty, Jean and Keriven, Renaud},
+  title     = {Some Links Between Min-Cuts, Optimal Spanning Forests and Watersheds},
+  booktitle = {International Symposium on Mathematical Morphology (ISMM)},
+  pages     = {253--264},
+  year      = {2007}
+}
+
+@article{cousty2009watershed,
+  author  = {Cousty, Jean and Bertrand, Gilles and Najman, Laurent and Couprie, Michel},
+  title   = {Watershed Cuts: Minimum Spanning Forests and the Drop of Water Principle},
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume  = {31},
+  number  = {8},
+  pages   = {1362--1374},
+  year    = {2009}
+}
+
+% ------------------------------------------------------------
+%  2. Temperature / spanning-forest reading of the p-limit
+% ------------------------------------------------------------
+
+@inproceedings{fitasanmartin2019probabilistic,
+  author    = {{Fita Sanmart{\'i}n}, Enrique and Damrich, Sebastian and Hamprecht, Fred A.},
+  title     = {Probabilistic Watershed: Sampling All Spanning Forests for Seeded
+               Segmentation and Semi-Supervised Learning},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2019},
+  note      = {Gibbs measure over 2-forests with $w(e)=\exp(-\mu c(e))$;
+               establishes $p$ as an inverse temperature and reinterprets the
+               Power Watershed as its zero-temperature limit}
+}
+
+@inproceedings{fitasanmartin2021directed,
+  author    = {{Fita Sanmart{\'i}n}, Enrique and Damrich, Sebastian and Hamprecht, Fred A.},
+  title     = {Directed Probabilistic Watershed},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2021}
+}
+
+% ------------------------------------------------------------
+%  3. Learned seeded segmentation
+% ------------------------------------------------------------
+
+@inproceedings{cerrone2019learned,
+  author    = {Cerrone, Lorenzo and Zeilmann, Alexander and Hamprecht, Fred A.},
+  title     = {End-to-End Learned Random Walker for Seeded Image Segmentation},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  pages     = {12559--12568},
+  year      = {2019},
+  eprint    = {1905.09045},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  note      = {Exact RW gradient plus sparse Jacobian sampling; the closest
+               prior art on the finite-$p$ side}
+}
+
+@misc{cerrone2019code,
+  author       = {Cerrone, Lorenzo},
+  title        = {pytorch-{L}earned{R}andom{W}alker},
+  howpublished = {\url{https://github.com/sciai-lab/pytorch-LearnedRandomWalker}},
+  year         = {2019}
+}
+
+@inproceedings{wolf2017learned,
+  author    = {Wolf, Steffen and Schott, Lukas and K{\"o}the, Ullrich and Hamprecht, Fred A.},
+  title     = {Learned Watershed: End-to-End Learning of Seeded Segmentation},
+  booktitle = {IEEE International Conference on Computer Vision (ICCV)},
+  year      = {2017},
+  eprint    = {1704.02249},
+  archivePrefix = {arXiv},
+  note      = {Structured learning inside Prim's algorithm; the alternative
+               attack on the combinatorial phase}
+}
+
+@inproceedings{wolf2018mutex,
+  author    = {Wolf, Steffen and Pape, Constantin and Bailoni, Alberto and
+               Rahaman, Nasim and Kreshuk, Anna and K{\"o}the, Ullrich and
+               Hamprecht, Fred A.},
+  title     = {The Mutex Watershed: Efficient, Parameter-Free Image Partitioning},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year      = {2018}
+}
+
+% ------------------------------------------------------------
+%  4. Unrolling and implicit differentiation
+% ------------------------------------------------------------
+
+@article{monga2021algorithm,
+  author  = {Monga, Vishal and Li, Yuelong and Eldar, Yonina C.},
+  title   = {Algorithm Unrolling: Interpretable, Efficient Deep Learning for
+             Signal and Image Processing},
+  journal = {IEEE Signal Processing Magazine},
+  volume  = {38},
+  number  = {2},
+  pages   = {18--44},
+  year    = {2021}
+}
+
+@inproceedings{gregor2010learning,
+  author    = {Gregor, Karol and LeCun, Yann},
+  title     = {Learning Fast Approximations of Sparse Coding},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year      = {2010}
+}
+
+@inproceedings{amos2017optnet,
+  author    = {Amos, Brandon and Kolter, J. Zico},
+  title     = {{OptNet}: Differentiable Optimization as a Layer in Neural Networks},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year      = {2017}
+}
+
+@inproceedings{bai2019deep,
+  author    = {Bai, Shaojie and Kolter, J. Zico and Koltun, Vladlen},
+  title     = {Deep Equilibrium Models},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2019},
+  note      = {Constant-memory adjoint; relevant to the implicit-differentiation route}
+}
+
+% ------------------------------------------------------------
+%  5. Zero-temperature limits and annealing schedules
+% ------------------------------------------------------------
+
+@inproceedings{agustsson2017soft,
+  author    = {Agustsson, Eirikur and Mentzer, Fabian and Tschannen, Michael and
+               Cavigelli, Lukas and Timofte, Radu and Benini, Luca and Van Gool, Luc},
+  title     = {Soft-to-Hard Vector Quantization for End-to-End Learning
+               Compressible Representations},
+  booktitle = {Advances in Neural Information Processing Systems (NIPS)},
+  year      = {2017},
+  eprint    = {1704.00648},
+  archivePrefix = {arXiv},
+  note      = {Documents both annealing failure modes: vanishing gradients when
+               too fast, soft-assignment inversion when too slow}
+}
+
+@inproceedings{jang2017categorical,
+  author    = {Jang, Eric and Gu, Shixiang and Poole, Ben},
+  title     = {Categorical Reparameterization with {G}umbel-Softmax},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2017}
+}
+
+@inproceedings{cuturi2013sinkhorn,
+  author    = {Cuturi, Marco},
+  title     = {Sinkhorn Distances: Lightspeed Computation of Optimal Transport},
+  booktitle = {Advances in Neural Information Processing Systems (NIPS)},
+  year      = {2013},
+  note      = {Entropic relaxation as the closest structural analogue to the
+               finite-$p$ relaxation of PW}
+}

@@ -1,0 +1,30 @@
+{
+ "rw_learned": {
+  "logits": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.20242456631343567,
+   "seams": 8999,
+   "seams_cut_frac": 0.10456717413045893
+  },
+  "layer": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.14834998699116103,
+   "seams": 8999,
+   "seams_cut_frac": 0.0870096677408601
+  },
+  "converged": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.12823902511057514,
+   "seams": 8999,
+   "seams_cut_frac": 0.07867540837870875
+  }
+ },
+ "unet": {
+  "logits": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.13247217163229286,
+   "seams": 8999,
+   "seams_cut_frac": 0.07678630958995444
+  }
+ }
+}

@@ -1,0 +1,372 @@
+% =====================================================================
+%  Working note: deep unrolling of the Random Walker / Power Watershed
+%  Lightly edited record of an exchange, structured for reuse.
+%
+%  Compile:  pdflatex pw_unrolling_note
+%            bibtex   pw_unrolling_note
+%            pdflatex pw_unrolling_note  (x2)
+%
+%  Requires: power_watershed_unrolling.bib in the same directory.
+% =====================================================================
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage[round]{natbib}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=blue,urlcolor=blue}
+
+% --- structure for the dialectical parts -----------------------------
+\newcommand{\claim}[1]{\medskip\noindent\textbf{#1}\quad}
+\newenvironment{position}[1]
+  {\begin{quote}\noindent\textit{#1:}\ }
+  {\end{quote}}
+
+% --- notation --------------------------------------------------------
+\newcommand{\Lap}{L}
+\newcommand{\LU}{\Lap_{U}}
+\newcommand{\xU}{x_{U}}
+\newcommand{\xM}{x_{M}}
+\newcommand{\we}{w_{e}}
+
+\theoremstyle{definition}
+\newtheorem{question}{Question}
+\newtheorem{remark}{Remark}
+
+\title{Deep Unrolling of the Random Walker and the\\
+       Power Watershed Limit: A Feasibility Note}
+\author{Working note\thanks{Record of a technical exchange, restructured
+        for circulation. Positions attributed as \emph{HT} are Hugues
+        Talbot's; the remainder is the interlocutor's analysis. Section
+        \ref{sec:open} lists what remains unverified.}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We assess the feasibility of deep-unrolling the Random Walker (RW)
+algorithm \citep{grady2006random} for use as a fast, differentiable
+edge-refinement module downstream of a CNN segmenter, and of extending
+this to the Power Watershed (PW) \citep{couprie2011power}. The RW itself
+unrolls cleanly: it reduces to a sparse SPD linear solve admitting both
+explicit unrolling and single-solve adjoint differentiation. The PW is
+the $p\to\infty$ limit of the same energy, and we argue that the
+obstacle to learning through it is not combinatorial non-differentiability
+but a \emph{zero-temperature gradient collapse}: convergence of minimizers
+does not entail convergence of sensitivities. This reading turns $p$ into
+an annealing temperature and suggests training at finite $p$ while
+deploying the exact maximum-spanning-forest implementation at
+$p=\infty$.
+\end{abstract}
+
+% =====================================================================
+\section{The question}
+% =====================================================================
+
+\begin{position}{HT}
+The target is a fast, differentiable watershed usable as an edge-refinement
+step inside a deep segmentation pipeline. The proposed route is the Power
+Watershed. First question: can the Random Walker be deep-unrolled?
+\end{position}
+
+\noindent
+Short answer: yes, and the RW is among the most unrolling-friendly
+classical algorithms available. The remainder of Section \ref{sec:rw}
+makes this precise; Sections \ref{sec:correction}--\ref{sec:temperature}
+address the extension to PW, which is where the difficulty actually lies.
+
+% =====================================================================
+\section{The Random Walker unrolls cleanly}
+\label{sec:rw}
+% =====================================================================
+
+Write the graph Laplacian in block form with respect to seeded ($M$) and
+unseeded ($U$) nodes,
+\begin{equation}
+  \Lap = \begin{pmatrix} \Lap_{M} & B \\ B^{\!\top} & \LU \end{pmatrix},
+\end{equation}
+so that the RW solution satisfies
+\begin{equation}
+  \LU\,\xU \;=\; -B^{\!\top}\xM .
+  \label{eq:rw}
+\end{equation}
+The matrix $\LU$ is sparse, symmetric and positive definite. Unrolling
+here is not unrolling a nonsmooth or combinatorial procedure --- it is
+unrolling a linear solve, the most favourable possible setting.
+
+\subsection{Route A: explicit unrolling}
+
+$K$ steps of Jacobi iteration read
+\begin{equation}
+  x^{(k+1)} \;=\; D^{-1} W x^{(k)}, \qquad
+  x^{(k+1)}\big|_{M} \;=\; \xM ,
+\end{equation}
+i.e.\ a normalised graph convolution with Dirichlet boundary conditions.
+The unrolled solver \emph{is} a message-passing network. Conjugate
+gradients unrolls equally well and provides a natural slot for a learned
+preconditioner. Memory cost is $O(KN)$; see \citet{gregor2010learning}
+and \citet{monga2021algorithm} for the general pattern.
+
+\subsection{Route B: implicit differentiation}
+
+Differentiating the optimality condition \eqref{eq:rw} avoids the tape
+entirely. For a loss $\ell(\xU)$, define the adjoint
+\begin{equation}
+  \lambda \;=\; \LU^{-1}\,\frac{\partial \ell}{\partial \xU},
+  \qquad \lambda\big|_{M} = 0 ,
+\end{equation}
+and then for each edge $e=\{u,v\}$,
+\begin{equation}
+  \boxed{\;
+  \frac{\partial \ell}{\partial \we}
+  \;=\; -\,(x_u - x_v)\,(\lambda_u - \lambda_v).
+  \;}
+  \label{eq:adjoint}
+\end{equation}
+A single adjoint solve --- \emph{with the same matrix}, so the
+factorisation or preconditioner is reused --- yields gradients with
+respect to every edge weight simultaneously, at memory cost independent
+of iteration count \citep{amos2017optnet,bai2019deep}. The derivation is
+given in Appendix \ref{app:adjoint}.
+
+\begin{remark}
+The product structure of \eqref{eq:adjoint} is itself the argument for
+the intended application. In the interior of a segment $x_u \approx x_v$,
+so the learning signal concentrates automatically at boundaries. For an
+edge-refinement module this is precisely the desired inductive bias.
+\end{remark}
+
+\subsection{Prior art}
+
+\citet{cerrone2019learned} implement exactly this: a CNN predicts the
+edge weights of the RW graph, interpretable as learning context-dependent
+diffusivities for a linear diffusion process. They derive the exact
+gradient and, finding the dense Jacobian prohibitive, propose sparse
+sampling schemes that remain competitive. PyTorch code is
+available \citep{cerrone2019code}. Any new contribution should therefore
+be located in the unrolled/truncated solver and the refinement framing,
+not in differentiability per se.
+
+\subsection{The truncation caveat}
+
+Truncating at $K$ iterations propagates information $K$ hops. For global
+seeded segmentation on a $512^2$ grid this is fatal: one needs
+$O(\mathrm{diameter})$ iterations, destroying the speed argument.
+
+For edge refinement it is not. Seeds are the confident interior of the
+CNN prediction and the boundary need only move a few pixels, so
+$K \sim 5$--$15$ suffices and truncation becomes a design choice rather
+than an approximation error. \textbf{This matching of application to the
+method's weakness is the strongest single point in the feasibility case.}
+If global reach is later required, the standard escape is a learned
+multigrid or coarse-to-fine solver rather than more iterations.
+
+\begin{remark}
+Prefer the prior-augmented formulation of \citet{grady2005multilabel} ---
+adding $\gamma\,\mathrm{diag}(s)$ to $\LU$ with a matching right-hand
+side --- over hard seed clamping. It preserves positive definiteness
+without hard constraints, makes the seeds differentiable, and provides
+the natural port for injecting the CNN's per-pixel logits as unaries.
+\end{remark}
+
+% =====================================================================
+\section{Correction: PW \emph{is} the RW at $p\to\infty$}
+\label{sec:correction}
+% =====================================================================
+
+\begin{position}{HT}
+The Power Watershed is the Random Walker converging with $p\to\infty$.
+The two-phase procedure --- compute a maximum spanning forest, then run
+the RW on the plateau of maximal-weight edges --- is a discrete
+implementation of that limit. The convergences are the same.
+\end{position}
+
+\noindent
+This is correct, and an earlier framing of PW as ``a different
+algorithm'' was wrong. The unifying energy is
+\begin{equation}
+  \arg\min_{x}\ \sum_{e=\{u,v\}\in E} \we^{\,p}\,\lvert x_u - x_v\rvert^{q},
+  \qquad x\big|_{\text{seeds}} \text{ fixed},
+  \label{eq:pw}
+\end{equation}
+with RW at ($p$ finite, $q=2$) and PW at ($p\to\infty$, $q$ finite)
+\citep{couprie2009power,couprie2011power}. At $q=2$ the limit is a
+multilabel, scale- and contrast-invariant \emph{unique} global optimum,
+obtained in practice in quasi-linear time. The MSF-then-RW-on-plateaus
+procedure is an exact finite-time evaluation of that limit, not a
+substitute for it. See also
+\citet{allene2007links,cousty2009watershed} for the surrounding
+equivalences.
+
+% =====================================================================
+\section{Where the difficulty actually lives}
+\label{sec:sensitivity}
+% =====================================================================
+
+The correction stands, and the obstacle survives it in sharper form.
+
+\claim{Convergence of minimizers does not give convergence of sensitivities.}
+That $x^{p} \to x^{\infty}$ holds is established. What learning requires
+is that $\partial x^{p}/\partial w$ converge to something usable, and
+that is a separate limit. As $p$ grows, $x^{\infty}$ becomes locally
+constant in $w$ away from changes in plateau structure: perturbing an
+edge weight leaves the MSF unchanged, hence leaves the solution
+unchanged. Therefore
+\begin{equation}
+  \frac{\partial x^{\infty}}{\partial w} \;\longrightarrow\; 0
+  \quad \text{a.e.,}
+\end{equation}
+and is undefined on the measure-zero set where the MSF combinatorics
+flip. Gradients do not fail to \emph{exist}; they fail to \emph{inform}.
+
+% =====================================================================
+\section{$p$ as an inverse temperature}
+\label{sec:temperature}
+% =====================================================================
+
+The correction improves the plan rather than rescuing it. In the
+Probabilistic Watershed formulation \citep{fitasanmartin2019probabilistic},
+edge weights are written
+\begin{equation}
+  w(e) = \exp\!\big(-\mu\, c(e)\big),
+\end{equation}
+with $\mu$ setting the entropy of the Gibbs distribution over $2$-forests;
+raising weights to a power rescales $\mu$. Hence
+\begin{equation}
+  w(e)^{p} \;=\; \exp\!\big(-p\,\mu\, c(e)\big),
+\end{equation}
+so $p$ is literally an inverse temperature, and $p\to\infty$ retains only
+the minimum-cost spanning forests. The degeneracy of Section
+\ref{sec:sensitivity} is then the standard zero-temperature gradient
+collapse, structurally identical to
+$\mathrm{softmax}\to\arg\max$ \citep{jang2017categorical} and to
+entropic optimal transport approaching the exact problem
+\citep{cuturi2013sinkhorn}.
+
+\subsection{Proposed scheme}
+
+\begin{enumerate}
+  \item \textbf{Train at finite $p$, annealed upward.} Finite-$p$ RW is
+    not an approximation of a different method; it is the same
+    one-parameter family at nonzero temperature. Unlike learned-watershed
+    approaches \citep{wolf2017learned} that train a surrogate and deploy a
+    combinatorial procedure, there is no train/test object mismatch: one
+    anneals along a path already proven to terminate at the deployed
+    algorithm.
+  \item \textbf{Deploy at $p=\infty$} with the MSF-plus-plateau
+    implementation, retaining the quasi-linear runtime that motivated the
+    exercise.
+\end{enumerate}
+
+\noindent
+\citet{agustsson2017soft} document both annealing failure modes: too fast
+and gradients vanish before learning occurs; too slow and the network
+inverts the soft assignment by driving weights large. The second mode is
+concrete here, since the CNN \emph{predicts} $w$ and can counteract $p$ by
+shrinking its output dynamic range. Constraining the output scale is
+advisable, and the contrast invariance of PW at $q=2$ supplies a
+principled normalisation.
+
+\subsection{The central tension, and a candidate resolution}
+
+Annealing $p$ upward multiplies weight ratios, so
+\begin{equation}
+  \kappa(\LU) \;\sim\; \exp\!\big(p \cdot \text{(cost spread)}\big),
+\end{equation}
+and CG iteration counts scale as $\sqrt{\kappa}$. The truncated solver of
+Section \ref{sec:rw} therefore degrades exactly as annealing proceeds:
+the two ideas fight. \textbf{Measuring the usable $p$ range against the
+iteration budget at target resolution is the first experiment.}
+
+A hybrid may dissolve the tension --- namely the existing two-phase
+implementation with its second phase warmed:
+\begin{center}
+  \emph{MSF $+$ finite-$p$ RW restricted to plateaus.}
+\end{center}
+The forward pass stays near-exact and near-quasi-linear. The gradient is
+then supported exactly on plateau edges, i.e.\ on those edges where the
+MSF is genuinely ambiguous and the decision is actually being made.
+Plateaus are small, so the ill-conditioned solve is small too.
+
+Supporting evidence: \citet{cerrone2019learned} found that arbitrary
+sparse sampling of the RW gradient remained competitive. If arbitrary
+sparsification suffices, a \emph{principled} sparsification supported on
+the ambiguity set should do at least as well.
+
+% =====================================================================
+\section{Novelty assessment}
+% =====================================================================
+
+\citet{wolf2017learned} attack the combinatorial phase directly, learning
+inside Prim's algorithm with structured training on sparse edge sets, and
+note that the resulting training set is far smaller than what
+unstructured learning affords. \citet{wolf2018mutex} pursue a different
+parameter-free partitioning route. Using $p$ itself as the annealing
+temperature --- exploiting the PW framework's own parameterisation as the
+relaxation path --- appears unoccupied. That the relaxation is
+\emph{internal to the framework} rather than bolted on is the
+publishable element.
+
+% =====================================================================
+\section{Open questions and next steps}
+\label{sec:open}
+% =====================================================================
+
+\begin{enumerate}
+  \item Is the convergence $x^{p}\to x^{\infty}$ uniform enough to bound
+    the surrogate gradient bias? A quantitative rate would convert the
+    scheme from heuristic to justified.
+  \item How does plateau structure behave under CNN-predicted weights?
+    Learned weights may produce far fewer exact ties than hand-designed
+    ones, shrinking plateaus and starving the gradient. An explicit tie
+    tolerance $\varepsilon$ may be required, with its own schedule.
+  \item Conditioning study: usable $p$ range versus CG/unrolled iteration
+    budget at target resolution.
+  \item Plateau-restricted adjoint: derivation and implementation.
+  \item Annealing schedule for $p$, jointly with any $\varepsilon$
+    schedule and the CNN output normalisation.
+\end{enumerate}
+
+% =====================================================================
+\appendix
+\section{Derivation of the adjoint gradient}
+\label{app:adjoint}
+% =====================================================================
+
+Take the Dirichlet energy $E(x,w) = \sum_{e=\{u,v\}} \we (x_u-x_v)^2$
+with $x|_{M}$ fixed. Stationarity in $\xU$ gives
+$\LU \xU + B^{\!\top}\xM = 0$, which is \eqref{eq:rw}. Differentiating
+with respect to a single weight $\we$,
+\begin{equation}
+  \LU \frac{\partial \xU}{\partial \we}
+  + \Big[\tfrac{\partial \Lap}{\partial \we} x\Big]_{U} = 0
+  \quad\Longrightarrow\quad
+  \frac{\partial \xU}{\partial \we}
+  = -\,\LU^{-1}\Big[\tfrac{\partial \Lap}{\partial \we} x\Big]_{U}.
+\end{equation}
+Since $\partial \Lap/\partial \we$ is the elementary edge Laplacian,
+the vector $(\partial \Lap/\partial \we)\,x$ has entry $(x_u - x_v)$ at
+$u$, entry $(x_v - x_u)$ at $v$, and zero elsewhere. Using symmetry of
+$\LU$ and setting $\lambda = \LU^{-1}\partial\ell/\partial\xU$ (extended
+by zero on seeds),
+\begin{equation}
+  \frac{\partial \ell}{\partial \we}
+  = \Big(\frac{\partial \ell}{\partial \xU}\Big)^{\!\top}
+    \frac{\partial \xU}{\partial \we}
+  = -\,\lambda^{\!\top}\Big[\tfrac{\partial \Lap}{\partial \we} x\Big]_{U}
+  = -\,(x_u - x_v)(\lambda_u - \lambda_v),
+\end{equation}
+which is \eqref{eq:adjoint}. For the powered weights of \eqref{eq:pw} the
+chain rule contributes an extra factor $p\,\we^{\,p-1}$, whose growth in
+$p$ is the algebraic counterpart of the conditioning blow-up.
+
+% =====================================================================
+\bibliographystyle{plainnat}
+\bibliography{power_watershed_unrolling}
+% =====================================================================
+
+\end{document}

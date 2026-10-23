@@ -1,0 +1,28 @@
+{
+ "unet_edge": {
+  "logits": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.2245395925772268,
+   "seams": 8999,
+   "seams_cut_frac": 0.15201689076564062
+  },
+  "pp_contour": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.6844055663767219,
+   "seams": 8999,
+   "seams_cut_frac": 0.5452828092010223
+  },
+  "pp_ws": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.3055530162926918,
+   "seams": 8999,
+   "seams_cut_frac": 0.1653517057450828
+  },
+  "pp_wsc": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.37324116981105543,
+   "seams": 8999,
+   "seams_cut_frac": 0.17457495277253027
+  }
+ }
+}

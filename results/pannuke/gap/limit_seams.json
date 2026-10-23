@@ -1,0 +1,30 @@
+{
+ "logits": {
+  "n_patches": 307,
+  "touch_px": 26367,
+  "touch_bg_frac": 0.30739181552698447,
+  "seams": 1423,
+  "seams_cut_frac": 0.16233309908643712
+ },
+ "layer": {
+  "n_patches": 307,
+  "touch_px": 26367,
+  "touch_bg_frac": 0.22387833276444039,
+  "seams": 1423,
+  "seams_cut_frac": 0.13281799016163034
+ },
+ "converged": {
+  "n_patches": 307,
+  "touch_px": 26367,
+  "touch_bg_frac": 0.19543368604695263,
+  "seams": 1423,
+  "seams_cut_frac": 0.11314125087842586
+ },
+ "limit": {
+  "n_patches": 307,
+  "touch_px": 26367,
+  "touch_bg_frac": 0.5678310008723025,
+  "seams": 1423,
+  "seams_cut_frac": 0.47505270555165147
+ }
+}

@@ -1,0 +1,15 @@
+--- PW_1.0.1/src/MSF_RW.c	2010-09-20 17:06:23
++++ PW_1.0.1_patched/src/MSF_RW.c	2026-10-23 19:57:58
+@@ -480,6 +480,12 @@
+   free(indic_VP);
+   free(indic_P);
+   free(Fth);
++  /* PATCH (comparison harness, Oct 2026): optional dump of the float potentials
++     proba[k][j], k < nb_labels-1, j < N, as raw float32, when PW_DUMP_PROBA is set.
++     No effect on the algorithm. */
++  { const char *dump = getenv("PW_DUMP_PROBA");
++    if (dump) { FILE *fd = fopen(dump, "wb");
++      if (fd) { for (k=0;k<nb_labels-1;k++) fwrite(proba[k], sizeof(DBL_TYPE), N, fd); fclose(fd); } } }
+   for (i=0; i<nb_labels-1; i++)  free(proba[i]);
+   free(proba);
+   free(sorted_weights);

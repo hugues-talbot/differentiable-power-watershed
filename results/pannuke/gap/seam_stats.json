@@ -1,0 +1,90 @@
+{
+ "unet_gap": {
+  "logits": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.19118774215777964,
+   "seams": 8999,
+   "seams_cut_frac": 0.13045893988220914
+  }
+ },
+ "rw_learned_gap_p50": {
+  "logits": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.2512182601908432,
+   "seams": 8999,
+   "seams_cut_frac": 0.14212690298922104
+  },
+  "layer": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.167982786141719,
+   "seams": 8999,
+   "seams_cut_frac": 0.11934659406600734
+  },
+  "converged": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.10933050185991239,
+   "seams": 8999,
+   "seams_cut_frac": 0.08656517390821203
+  }
+ },
+ "rw_learned_gap_p20": {
+  "logits": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.29916110568099513,
+   "seams": 8999,
+   "seams_cut_frac": 0.1649072119124347
+  },
+  "layer": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.18535134412949772,
+   "seams": 8999,
+   "seams_cut_frac": 0.1345705078342038
+  },
+  "converged": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.1490953583056163,
+   "seams": 8999,
+   "seams_cut_frac": 0.11401266807423047
+  }
+ },
+ "rw_learned_gap_p20_sharp": {
+  "logits": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.2550154348116531,
+   "seams": 8999,
+   "seams_cut_frac": 0.15657295255028336
+  },
+  "layer": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.16877034828529439,
+   "seams": 8999,
+   "seams_cut_frac": 0.12190243360373375
+  },
+  "converged": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.13306987504482776,
+   "seams": 8999,
+   "seams_cut_frac": 0.10078897655295033
+  }
+ },
+ "rw_learned_gap_p10_sharp": {
+  "logits": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.3148631259185295,
+   "seams": 8999,
+   "seams_cut_frac": 0.1894654961662407
+  },
+  "layer": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.1986906779363059,
+   "seams": 8999,
+   "seams_cut_frac": 0.13623735970663406
+  },
+  "converged": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.17507084543389753,
+   "seams": 8999,
+   "seams_cut_frac": 0.12079119902211356
+  }
+ }
+}

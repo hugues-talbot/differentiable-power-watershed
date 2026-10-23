@@ -1,0 +1,22 @@
+{
+ "rw_learned": {
+  "logits": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.41996048125672414,
+   "seams": 8999,
+   "seams_cut_frac": 0.2572508056450717
+  },
+  "layer": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.2915034701956951,
+   "seams": 8999,
+   "seams_cut_frac": 0.1932436937437493
+  },
+  "converged": {
+   "touch_px": 142211,
+   "touch_bg_frac": 0.2262553529614446,
+   "seams": 8999,
+   "seams_cut_frac": 0.15168352039115457
+  }
+ }
+}
