@@ -36,3 +36,9 @@ on one NVIDIA RTX 6000 Ada and on A100 nodes.
 ## Citation
 
 Until the proceedings appear, please cite the arXiv / HAL version (to come) or this repository.
+
+## Licence
+
+The code (`experiments/`) is released under the BSD-3-Clause licence (`LICENSE`); the
+report, the note, the result tables and the figures under CC BY-SA 4.0 (`LICENSE-CC-BY-SA`).
+Copyright 2026 Galia R. Akl, Laurent Najman, Hugues Talbot.

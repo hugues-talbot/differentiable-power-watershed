@@ -1,0 +1,13 @@
+Copyright (c) 2026 Galia R. Akl, Laurent Najman, Hugues Talbot
+
+The written material, the figures and the result tables in this repository (the report
+finishing-layer-experiments.md, the note pw_unrolling_note.tex and its bibliography, and
+everything under results/) are licensed under the Creative Commons
+Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0).
+
+You are free to share and adapt this material for any purpose, provided that you give
+appropriate credit, indicate if changes were made, and distribute your contributions
+under the same licence. The full licence text is at
+https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+The source code under experiments/ is licensed separately under BSD-3-Clause; see LICENSE.
